@@ -7,42 +7,28 @@ pipeline {
             steps {
                 fileExists 'pom.xml'
                 
-                    sh 'mvn compile install -Dv=${BUILD_NUMBER}'
+                    sh 'mvn clean package'
                
                 }
             }
         
 
-        stage ('Testing Stage') {
+        stage ('Upload war to nexus') {
 
             steps {
       
-                    sh 'mvn clean test -Dv=${BUILD_NUMBER}'
+                 nexusArtifactUploader artifacts: [[artifactId: 'myweb', 
+                                       classifier: '', file: 'target/my-app-1.0.0-SNAPSHOT.war', 
+                                       type: 'war']], 
+                                       
+                     credentialsId: '534c93e0-2f0b-491c-baac-b420083e84c4', 
+                     groupId: 'in.javahome', 
+                     nexusUrl: '192.168.0.111:8081', 
+                     nexusVersion: 'nexus3', 
+                     protocol: 'http', 
+                     repository: 'devops-nexus', 
+                     version: '1.0.0-SNAPSHOT'
                 }
             }
-        
-
-
-        stage ('Deployment Stage') {
-            steps {
-                    sh 'mvn package -Dv=${BUILD_NUMBER}'
-                }
-            }
-        
-            
-          stage ('Archive Stage') {
-            steps {
-             
-                archiveArtifacts '**/target/*.war'
-                }
-            }   
-             stage ('Deploy on Webserver Stage') {
-            steps {
-             
-                   sh "sudo cp -rf /var/lib/jenkins/workspace/jenkins-tag-pipeline/target/*.war /root/jenkins/apache-tomcat-9.0.48/webapps"
-           
-              }
-            }   
-      
     }
 }
