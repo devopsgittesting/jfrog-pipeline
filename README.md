@@ -1,1 +1,1 @@
-# jenkins-git-maven-2 
+# nexus-jenkins
