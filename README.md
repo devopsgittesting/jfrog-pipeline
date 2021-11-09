@@ -1,1 +1,1 @@
-# nexus-jenkins
+# jfrog-pipeline
