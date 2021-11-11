@@ -19,21 +19,18 @@ pipeline {
         }
 	stage ('Server'){
             steps {
-		
-			 
-		
+		 withCredentials([string(credentialsId: 'my-secret', variable: 'SECRET')]) {
                rtServer (
-		        withCredentials([string(credentialsId: 'my-secret', variable: 'SECRET')]) {
                  id: "Artifactory",
                  url: 'http://192.168.0.115:8082/artifactory',
                  username: 'admin',
-	          password: '${SECRET}',
+	          password: "${SECRET}",
                   bypassProxy: true,
                    timeout: 300
                         )
             }
-	    }    
-		       }
+	    }    }
+		       
         stage('Upload'){
             steps{
                 rtUpload (
