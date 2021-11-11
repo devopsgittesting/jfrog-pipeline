@@ -1,34 +1,55 @@
 pipeline {
     agent any
 
-    stages {
-        stage ('BuildStage') {
-
+   stages {
+	    stage('Git CheckOut') {
+		    steps {
+			   git branch: 'main', credentialsId: 'My private token login creds', url: 'https://github.com/devopsgittesting/jfrog-pipeline.git'
+			}
+		}
+        stage('Clean and Install') {
             steps {
-                fileExists 'pom.xml'
-                
-                    sh 'mvn clean package'
-               
-                }
+                bat 'mvn clean install'
             }
-        
-
-        stage ('Upload war to nexus') {
-
+        }
+        stage ('Package'){
             steps {
-      
-                 nexusArtifactUploader artifacts: [[artifactId: 'myweb', 
-                                       classifier: '', file: 'target/myweb-1.0.0-SNAPSHOT.war', 
-                                       type: 'war']], 
-                                       
-                     credentialsId: '534c93e0-2f0b-491c-baac-b420083e84c4', 
-                     groupId: 'in.javahome', 
-                     nexusUrl: '192.168.0.111:8081', 
-                     nexusVersion: 'nexus3', 
-                     protocol: 'http', 
-                     repository: 'devops-nexus', 
-                     version: '1.0.3-SNAPSHOT'
-                }
+                bat 'mvn package'
+             }
+        }
+	stage ('Server'){
+            steps {
+               rtServer (
+                 id: "Artifactory",
+                 url: 'http://192.168.0.115:8082/artifactory',
+                 username: 'admin',
+                  password: 'Admin@1234',
+                  bypassProxy: true,
+                   timeout: 300
+                        )
             }
+        }
+        stage('Upload'){
+            steps{
+                rtUpload (
+                 serverId:"Artifactory" ,
+                  spec: '''{
+                   "files": [
+                      {
+                      "pattern": "*.war",
+                      "target": "maven-demo-repo"
+                      }
+                            ]
+                           }''',
+                        )
+            }
+        }
+        stage ('Publish build info') {
+            steps {
+                rtPublishBuildInfo (
+                    serverId: "Artifactory"
+                )
+            }
+        }
     }
 }
