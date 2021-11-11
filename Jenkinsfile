@@ -37,7 +37,7 @@ pipeline {
                    "files": [
                       {
                       "pattern": "*.war",
-                      "target": "maven-demo-repo"
+                      "target": "maven-demo-repo-libs-snapshot-local"
                       }
                             ]
                            }''',
