@@ -25,7 +25,7 @@ pipeline {
                  id: "Artifactory",
                  url: 'http://192.168.0.115:8082/artifactory',
                  username: 'admin',
-                  password: '${secretabc}',
+                  password: 'secretabc',
                   bypassProxy: true,
                    timeout: 300
                         )
