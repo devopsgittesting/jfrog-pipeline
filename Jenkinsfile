@@ -19,11 +19,11 @@ pipeline {
         }
 	stage ('Server'){
             steps {
-		 withCredentials([string(credentialsId: 'my-secret', variable: 'SECRET')]) {
+	withCredentials([usernameColonPassword(credentialsId: 'jfrog-creds', variable: 'SECRET')]) {
                rtServer (
                  id: "Artifactory",
                  url: 'http://192.168.0.115:8082/artifactory',
-                 username: 'admin',
+                 username: "${SECRET}",
 	          password: "${SECRET}",
                   bypassProxy: true,
                    timeout: 300
