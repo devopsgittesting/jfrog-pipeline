@@ -30,28 +30,21 @@ pipeline {
             }
         }
 
-	      stage ('Upload file') {
-            steps {
+        stage('Upload'){
+            steps{
                 rtUpload (
-                    // Obtain an Artifactory server instance, defined in Jenkins --> Manage Jenkins --> Configure System:
-                    serverId: Artifactory,
-                    spec: """{
-                            "files": [
-                                    {
-                                        "pattern": "*.war",
-                                        "target": "maven-demo-repo-libs-snapshot-local"
-                                    }
-                                ]
-                            }"""
-                )
+                 serverId:"Artifactory" ,
+                  spec: '''{
+                   "files": [
+                      {
+                      "pattern": "*.war",
+                      "target": "maven-demo-repo-libs-snapshot-local"
+                      }
+                            ]
+                           }''',
+                        )
             }
         }
-
-	   
-	   
-	   
-	   
-	   
 	   
         stage ('Publish build info') {
             steps {
