@@ -19,7 +19,7 @@ pipeline {
         }
 	stage ('Server'){
             steps {
-		 withCredentials([string(credentialsId: 'my-secret', variable: 'SECRET')]) {
+		
     
                rtServer (
                  id: "Artifactory",
@@ -30,7 +30,7 @@ pipeline {
                    timeout: 300
                         )
             }
-	    }    }
+	    }    
 
         stage('Upload'){
             steps{
